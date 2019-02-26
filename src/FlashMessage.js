@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { StyleSheet, TouchableWithoutFeedback, StatusBar, Animated, Image, Text, View, Platform } from "react-native";
-import { isIphoneX, getStatusBarHeight } from "react-native-iphone-x-helper";
+import { isIphoneX, ifIphoneX, getStatusBarHeight } from "react-native-iphone-x-helper";
 import PropTypes from "prop-types";
 
 import FlashMessageManager from "./FlashMessageManager";
@@ -585,11 +585,19 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   defaultFlash: {
-    justifyContent: "flex-start",
-    paddingVertical: 15,
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
     backgroundColor: "#696969",
     minHeight: OFFSET_HEIGHT,
+    ...ifIphoneX(
+      {
+        paddingTop: 10,
+      },
+      {
+        paddingVertical: 15,
+      }
+    ),
   },
   defaultFlashCenter: {
     margin: 44,

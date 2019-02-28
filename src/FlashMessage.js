@@ -548,6 +548,7 @@ export default class FlashMessage extends Component {
     const floating = this.prop(message, "floating");
     const position = this.prop(message, "position");
     const icon = parseIcon(this.prop(message, "icon"));
+    const onClose = this.prop(message, "onClose");
     const hideStatusBar = this.prop(message, "hideStatusBar");
     const transitionConfig = this.prop(message, "transitionConfig");
     const animated = this.isAnimated(message);
@@ -570,6 +571,7 @@ export default class FlashMessage extends Component {
               renderFlashMessageIcon={renderFlashMessageIcon}
               renderFlashMessageClose={renderFlashMessageClose}
               icon={icon}
+              onClose={onClose}
               style={style}
               textStyle={textStyle}
               titleStyle={titleStyle}

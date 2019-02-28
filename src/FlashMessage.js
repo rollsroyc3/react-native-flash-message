@@ -176,7 +176,7 @@ export const renderFlashMessageIcon = (icon = "success", style = {}, customProps
 
 export const renderFlashMessageClose = (onPress = () => {}) => {
   return (
-    <TouchableOpacity style={styles.closeIcon} onPress={onPress}>
+    <TouchableOpacity hitSlop={{ top: 5, left: 5, bottom: 5, right: 5 }} style={styles.closeIcon} onPress={onPress}>
       <Image style={styles.flashIcon} source={require("./icons/fm_icon_danger.png")} />
     </TouchableOpacity>
   );
@@ -681,6 +681,13 @@ const styles = StyleSheet.create({
     right: 25,
     position: "absolute",
     padding: 10,
-    bottom: 24,
+    ...ifIphoneX(
+      {
+        bottom: 24,
+      },
+      {
+        bottom: 30,
+      }
+    ),
   },
 });

@@ -164,6 +164,14 @@ export const renderFlashMessageIcon = (icon = "success", style = {}, customProps
   }
 };
 
+export const renderFlashMessageClose = (onPress = () => {}) => {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Image style={[styles.flashIcon, styles.closeIcon]} source={require("./icons/fm_icon_danger.png")} />
+    </TouchableOpacity>
+  );
+};
+
 /**
  * Default MessageComponent used in FlashMessage
  * This component it's wrapped in `FlashMessageWrapper` to handle orientation change and extra inset padding in special devices
@@ -175,9 +183,11 @@ export const DefaultFlash = ({
   textStyle,
   titleStyle,
   renderFlashMessageIcon,
+  renderFlashMessageClose,
   position = "top",
   floating = false,
   icon,
+  onClose,
   hideStatusBar = false,
   ...props
 }) => {
@@ -191,6 +201,9 @@ export const DefaultFlash = ({
       icon.style,
     ]);
   const hasIcon = !!iconView;
+
+  const closeView = onClose && renderCloseIcon();
+  const hasClose = !!closeView;
 
   return (
     <FlashMessageWrapper position={typeof position === "string" ? position : null}>
@@ -233,6 +246,7 @@ export const DefaultFlash = ({
             )}
           </View>
           {hasIcon && icon.position === "right" && iconView}
+          {hasClose && closeView}
         </View>
       )}
     </FlashMessageWrapper>
@@ -242,6 +256,7 @@ export const DefaultFlash = ({
 DefaultFlash.propTypes = {
   message: MessagePropType,
   renderFlashMessageIcon: PropTypes.func,
+  renderFlashMessageClose: PropTypes.func,
 };
 
 /**
@@ -311,6 +326,10 @@ export default class FlashMessage extends Component {
      */
     renderFlashMessageIcon,
     /**
+     * The `renderFlashMessageClose` prop set a custom render function for inside close icons
+     */
+    renderFlashMessageClose,
+    /**
      * The `transitionConfig` prop set the transition config function used in shown/hide anim interpolations
      */
     transitionConfig: FlashMessageTransition,
@@ -334,6 +353,7 @@ export default class FlashMessage extends Component {
     position: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
     icon: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     renderFlashMessageIcon: PropTypes.func,
+    renderFlashMessageClose: PropTypes.func,
     transitionConfig: PropTypes.func,
     MessageComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   };
@@ -519,7 +539,7 @@ export default class FlashMessage extends Component {
     this.toggleVisibility(false, animated);
   }
   render() {
-    const { renderFlashMessageIcon, MessageComponent } = this.props;
+    const { renderFlashMessageIcon, renderFlashMessageClose, MessageComponent } = this.props;
     const { message, visibleValue } = this.state;
 
     const style = this.prop(message, "style");
@@ -548,6 +568,7 @@ export default class FlashMessage extends Component {
               message={message}
               hideStatusBar={hideStatusBar}
               renderFlashMessageIcon={renderFlashMessageIcon}
+              renderFlashMessageClose={renderFlashMessageClose}
               icon={icon}
               style={style}
               textStyle={textStyle}
@@ -637,6 +658,14 @@ const styles = StyleSheet.create({
     marginRight: 9,
   },
   flashIconRight: {
+    marginRight: -6,
+    marginLeft: 9,
+  },
+  closeIcon: {
+    tintColor: "#fff",
+    marginTop: -1,
+    width: 21,
+    height: 21,
     marginRight: -6,
     marginLeft: 9,
   },

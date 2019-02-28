@@ -202,7 +202,7 @@ export const DefaultFlash = ({
     ]);
   const hasIcon = !!iconView;
 
-  const closeView = onClose && renderCloseIcon();
+  const closeView = onClose && renderFlashMessageClose();
   const hasClose = !!closeView;
 
   return (

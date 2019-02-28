@@ -176,8 +176,8 @@ export const renderFlashMessageIcon = (icon = "success", style = {}, customProps
 
 export const renderFlashMessageClose = (onPress = () => {}) => {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Image style={[styles.flashIcon, styles.closeIcon]} source={require("./icons/fm_icon_danger.png")} />
+    <TouchableOpacity style={styles.closeIcon} onPress={onPress}>
+      <Image style={styles.flashIcon} source={require("./icons/fm_icon_danger.png")} />
     </TouchableOpacity>
   );
 };
@@ -212,7 +212,7 @@ export const DefaultFlash = ({
     ]);
   const hasIcon = !!iconView;
 
-  const closeView = onClose && renderFlashMessageClose();
+  const closeView = onClose && renderFlashMessageClose(onClose);
   const hasClose = !!closeView;
 
   return (
@@ -621,6 +621,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
+    width: "100%",
     backgroundColor: "#696969",
     minHeight: OFFSET_HEIGHT,
     ...ifIphoneX(
@@ -633,7 +634,7 @@ const styles = StyleSheet.create({
     ),
   },
   defaultFlashCenter: {
-    margin: 44,
+    //margin: 44,
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -675,10 +676,11 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     tintColor: "#fff",
-    marginTop: -1,
     width: 21,
     height: 21,
-    marginRight: -6,
-    marginLeft: 9,
+    right: 25,
+    position: "absolute",
+    padding: 10,
+    bottom: 24,
   },
 });

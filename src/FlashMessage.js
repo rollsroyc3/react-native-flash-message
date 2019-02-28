@@ -1,7 +1,17 @@
 "use strict";
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableWithoutFeedback, StatusBar, Animated, Image, Text, View, Platform } from "react-native";
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  StatusBar,
+  Animated,
+  Image,
+  Text,
+  View,
+  Platform,
+} from "react-native";
 import { isIphoneX, ifIphoneX, getStatusBarHeight } from "react-native-iphone-x-helper";
 import PropTypes from "prop-types";
 

@@ -676,18 +676,9 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     tintColor: "#fff",
-    width: 21,
-    height: 21,
-    right: 25,
+    padding: 13,
     position: "absolute",
-    padding: 10,
-    ...ifIphoneX(
-      {
-        bottom: 24,
-      },
-      {
-        bottom: 30,
-      }
-    ),
+    bottom: Platform.OS === 'ios' ? 0 : 6,
+    right: Platform.OS === 'ios' ? 0 : 5,
   },
 });

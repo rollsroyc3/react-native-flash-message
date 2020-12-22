@@ -1,8 +1,18 @@
 "use strict";
 
 import React, { Component } from "react";
-import { StyleSheet, TouchableWithoutFeedback, StatusBar, Animated, Image, Text, View, Platform } from "react-native";
-import { isIphoneX, getStatusBarHeight } from "react-native-iphone-x-helper";
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  StatusBar,
+  Animated,
+  Image,
+  Text,
+  View,
+  Platform,
+} from "react-native";
+import { isIphoneX, ifIphoneX, getStatusBarHeight } from "react-native-iphone-x-helper";
 import PropTypes from "prop-types";
 
 import FlashMessageManager from "./FlashMessageManager";
@@ -164,6 +174,14 @@ export const renderFlashMessageIcon = (icon = "success", style = {}, customProps
   }
 };
 
+export const renderFlashMessageClose = (onPress = () => {}) => {
+  return (
+    <TouchableOpacity hitSlop={{ top: 5, left: 5, bottom: 5, right: 5 }} style={styles.closeIcon} onPress={onPress}>
+      <Image style={styles.flashIcon} source={require("./icons/fm_icon_danger.png")} />
+    </TouchableOpacity>
+  );
+};
+
 /**
  * Default MessageComponent used in FlashMessage
  * This component it's wrapped in `FlashMessageWrapper` to handle orientation change and extra inset padding in special devices
@@ -175,9 +193,11 @@ export const DefaultFlash = ({
   textStyle,
   titleStyle,
   renderFlashMessageIcon,
+  renderFlashMessageClose,
   position = "top",
   floating = false,
   icon,
+  onClose,
   hideStatusBar = false,
   ...props
 }) => {
@@ -191,6 +211,9 @@ export const DefaultFlash = ({
       icon.style,
     ]);
   const hasIcon = !!iconView;
+
+  const closeView = onClose && renderFlashMessageClose(onClose);
+  const hasClose = !!closeView;
 
   return (
     <FlashMessageWrapper position={typeof position === "string" ? position : null}>
@@ -233,6 +256,7 @@ export const DefaultFlash = ({
             )}
           </View>
           {hasIcon && icon.position === "right" && iconView}
+          {hasClose && closeView}
         </View>
       )}
     </FlashMessageWrapper>
@@ -242,6 +266,7 @@ export const DefaultFlash = ({
 DefaultFlash.propTypes = {
   message: MessagePropType,
   renderFlashMessageIcon: PropTypes.func,
+  renderFlashMessageClose: PropTypes.func,
 };
 
 /**
@@ -311,6 +336,10 @@ export default class FlashMessage extends Component {
      */
     renderFlashMessageIcon,
     /**
+     * The `renderFlashMessageClose` prop set a custom render function for inside close icons
+     */
+    renderFlashMessageClose,
+    /**
      * The `transitionConfig` prop set the transition config function used in shown/hide anim interpolations
      */
     transitionConfig: FlashMessageTransition,
@@ -334,6 +363,7 @@ export default class FlashMessage extends Component {
     position: PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object]),
     icon: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     renderFlashMessageIcon: PropTypes.func,
+    renderFlashMessageClose: PropTypes.func,
     transitionConfig: PropTypes.func,
     MessageComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
   };
@@ -519,7 +549,7 @@ export default class FlashMessage extends Component {
     this.toggleVisibility(false, animated);
   }
   render() {
-    const { renderFlashMessageIcon, MessageComponent } = this.props;
+    const { renderFlashMessageIcon, renderFlashMessageClose, MessageComponent } = this.props;
     const { message, visibleValue } = this.state;
 
     const style = this.prop(message, "style");
@@ -528,6 +558,7 @@ export default class FlashMessage extends Component {
     const floating = this.prop(message, "floating");
     const position = this.prop(message, "position");
     const icon = parseIcon(this.prop(message, "icon"));
+    const onClose = this.prop(message, "onClose");
     const hideStatusBar = this.prop(message, "hideStatusBar");
     const transitionConfig = this.prop(message, "transitionConfig");
     const animated = this.isAnimated(message);
@@ -548,7 +579,9 @@ export default class FlashMessage extends Component {
               message={message}
               hideStatusBar={hideStatusBar}
               renderFlashMessageIcon={renderFlashMessageIcon}
+              renderFlashMessageClose={renderFlashMessageClose}
               icon={icon}
+              onClose={onClose}
               style={style}
               textStyle={textStyle}
               titleStyle={titleStyle}
@@ -585,14 +618,23 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   defaultFlash: {
-    justifyContent: "flex-start",
-    paddingVertical: 15,
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
+    width: "100%",
     backgroundColor: "#696969",
     minHeight: OFFSET_HEIGHT,
+    ...ifIphoneX(
+      {
+        paddingTop: 10,
+      },
+      {
+        paddingVertical: 15,
+      }
+    ),
   },
   defaultFlashCenter: {
-    margin: 44,
+    //margin: 44,
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -631,5 +673,12 @@ const styles = StyleSheet.create({
   flashIconRight: {
     marginRight: -6,
     marginLeft: 9,
+  },
+  closeIcon: {
+    tintColor: "#fff",
+    padding: 13,
+    position: "absolute",
+    bottom: Platform.OS === 'ios' ? 0 : 6,
+    right: Platform.OS === 'ios' ? 0 : 5,
   },
 });
